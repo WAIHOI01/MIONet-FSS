@@ -1,4 +1,4 @@
-# MIONet-FSS: A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Active Inverse Design
+# A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Uncertainty-Aware Inverse Design Design
 
 Deep-learning-driven forward prediction and inverse design of Frequency Selective
 Surfaces (FSS) using **MIONet** (Multiple-Input Operator Networks).  The system
@@ -11,7 +11,7 @@ layouts that satisfy user-defined filtering tasks.
 
 If you use this code in your research, please cite the accompanying paper:
 
-> **MIONet-FSS: A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Active Inverse Design**
+> **A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Uncertainty-Aware Inverse Design**
 >
 > Weikai Luo, Da Li, Zhang Pei, Jiahui Wang, Wenzhe Wu, Ruifeng Li, Jinyan Ma, Chongxiao Qu, and Er-Ping Li
 >
