@@ -11,7 +11,7 @@ layouts that satisfy user-defined filtering tasks.
 
 If you use this code in your research, please cite the accompanying paper:
 
-> **A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Active Inverse Design**
+> **MIONet-FSS: A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Active Inverse Design**
 >
 > Weikai Luo, Da Li, Zhang Pei, Jiahui Wang, Wenzhe Wu, Ruifeng Li, Jinyan Ma, Chongxiao Qu, and Er-Ping Li
 >
@@ -35,9 +35,9 @@ MIONet-FSS/
   code/
     common/          Shared modules: config, MIONet, dataset, loss, basis
     forward/         Training entry point + world-model inference wrapper
-    active_rl/       Active PPO training code used for the paper (v11 canonical:
-                     world-model ensemble + uncertainty-gated CST verification,
-                     tau monitor, PPO hyperparameter ablation, checkpoints)
+    active_rl/       Active PPO training code used for the paper (world-model
+                     ensemble + uncertainty-gated CST verification, tau monitor,
+                     PPO hyperparameter ablation, checkpoints)
     inverse/         RL environment (V11AngleDispersionEnv), reward, task spec, GA/RL search
     cst/             CST Studio Suite TCP client + batch-validation script
     eval/            Pass-rate computation, benchmark runner, summary tables
@@ -99,12 +99,12 @@ python forward/train.py --epochs 300 --batch-size 64 --lr 1e-3 --output ./checkp
 Loads the paired TE+TM dataset, splits by geometry, and trains a 3-branch
 MIONet with dual-mode physics-aware loss.
 
-### Train the active-RL agent (v11 — paper configuration)
+### Train the active-RL agent (paper configuration)
 
 ```bash
 conda activate pytorch
 cd MIONet-FSS/code
-python active_rl/train_rl_active_learning_v11_world_model.py \
+python active_rl/train_rl_active_learning_world_model.py \
     --task-kind mode --design-mode transmit --no-cst --timesteps 100000 \
     --episode-len 25 --selfplay-round-episodes 64
 ```
@@ -159,7 +159,7 @@ python eval/benchmark.py
 | `common/loss.py` | DualModePhysicsLoss: MSE + energy-conservation penalty |
 | `forward/train.py` | Training entry point for M1 MIONet |
 | `forward/world_model.py` | Inference-only ensemble wrapper for RL/GA evaluation |
-| `active_rl/train_rl_active_learning_v11_world_model.py` | **Canonical active-RL training entry (paper configuration)**; compatibility shim → `active_rl.cli` (same name, existing commands keep working) |
+| `active_rl/train_rl_active_learning_world_model.py` | **Canonical active-RL training entry (paper configuration)**; thin shim → `active_rl.cli` |
 | `active_rl/cli.py`, `active_rl/trainer.py` | CLI flags (27 + 3 fixed-target) and `train(args)`: PPO construction, RNG order, `run_meta.json` |
 | `active_rl/env.py`, `active_rl/tasks.py`, `active_rl/reward.py` | `V11AngleDispersionEnv` (quarter-pixel placement + curve observations), task builders / fixed v11 4×4 grid sampling, terminal S-parameter reward |
 | `active_rl/world_model.py`, `active_rl/networks.py` | Local 3-copy MIONet ensemble (surrogate evaluated every step); model definitions (checkpoint layouts unchanged) |

@@ -1,6 +1,6 @@
 """Aggregate RL hyperparameter ablation runs into a per-config table.
 
-Walks an ablation root (results_v11_world_model), finds run dirs with a
+Walks an ablation root (results_world_model), finds run dirs with a
 run_meta.json carrying {tag, seed, global_best_reward,
 best_cycle_mean_reward} plus a cycle_metrics.jsonl (one {cycle,
 mean_reward} per active-learning cycle), and folds them into per-config
@@ -23,7 +23,7 @@ import os
 import numpy as np
 
 DEFAULT_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            "results_v11_world_model")
+                            "results_world_model")
 LAST_K = 10
 
 

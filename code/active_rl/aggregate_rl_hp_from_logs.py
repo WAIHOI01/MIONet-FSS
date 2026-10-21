@@ -24,7 +24,7 @@ import re
 import numpy as np
 
 DEFAULT_LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               "results_v11_world_model", "ablation_logs")
+                               "results_world_model", "ablation_logs")
 CYCLE_RE = re.compile(
     r"\[cycle (\d+)\].*?mean_reward=(-?[\d.]+(?:[eE][+-]?\d+)?)"
     r".*?global_best=(-?[\d.]+(?:[eE][+-]?\d+)?)")

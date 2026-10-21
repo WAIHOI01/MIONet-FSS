@@ -36,7 +36,7 @@ Run it exactly like the plain trainer, e.g.:
 CST is ON by default (same as the trainer); pass --mock-cst for a no-hardware
 smoke test or --no-cst to disable.
 
-Monitor outputs go to results_v12_monitor/<monitor-tag>/ (never into the
+Monitor outputs go to results_monitor/<monitor-tag>/ (never into the
 training run dir, so the training artifacts stay byte-compatible).
 """
 
@@ -61,11 +61,11 @@ from active_rl import callbacks, cst_client, cst_gate, config, reward, trainer
 from active_rl import cli
 from active_rl.env import V11AngleDispersionEnv
 
-MONITOR_ROOT = os.path.join(config.SCRIPT_DIR, "results_v12_monitor")
+MONITOR_ROOT = os.path.join(config.SCRIPT_DIR, "results_monitor")
 
 MON = {
     "dir": None,
-    "tag": "v12",
+    "tag": "monitor",
     "t0": None,
     "seed": None,
     "gate_fh": None,
@@ -266,7 +266,7 @@ callbacks.AngleVizCallback._on_step = _on_step_with_snapshots
 # patch 2: CST call timing
 # --------------------------------------------------------------------------
 def _wrap_cst_class(cls):
-    if cls is None or getattr(cls, "_v12_wrapped", False):
+    if cls is None or getattr(cls, "_mon_wrapped", False):
         return cls
 
     for meth in ("simulate", "simulate_both"):
@@ -303,7 +303,7 @@ def _wrap_cst_class(cls):
             return wrapped
 
         setattr(cls, meth, make_wrapped(orig, meth))
-    cls._v12_wrapped = True
+    cls._mon_wrapped = True
     return cls
 
 
@@ -441,9 +441,9 @@ def main():
         np.random.seed(known.seed)
         torch.manual_seed(known.seed)
 
-    print(f"[v12-monitor] tag={tag} tau={args.uncertainty_threshold} seed={known.seed} "
+    print(f"[tau-monitor] tag={tag} tau={args.uncertainty_threshold} seed={known.seed} "
           f"sampling={known.target_sampling}")
-    print(f"[v12-monitor] logs -> {mon_dir}")
+    print(f"[tau-monitor] logs -> {mon_dir}")
 
     t0 = time.perf_counter()
     status = "ok"
@@ -526,7 +526,7 @@ def main():
                     MON[key] = None
             except Exception:
                 pass
-        print(f"[v12-monitor] done status={status} "
+        print(f"[tau-monitor] done status={status} "
               f"gate_evals={MON['gate_counter']} cst_calls={MON['cst_counter']} -> {mon_dir}")
 
 

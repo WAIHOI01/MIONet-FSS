@@ -26,7 +26,7 @@ QUARTER_SIZE = GRID_SIZE // 2
 QUARTER_PIXEL_INDICES = [(i, j) for i in range(QUARTER_SIZE) for j in range(QUARTER_SIZE)]
 STANDARD_FREQS = np.linspace(0.01, 20.0, N_FREQ, dtype=np.float32)
 
-RESULTS_DIR = os.path.join(SCRIPT_DIR, "results_v11_world_model")
+RESULTS_DIR = os.path.join(SCRIPT_DIR, "results_world_model")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # ---- joint angle-stability config ----

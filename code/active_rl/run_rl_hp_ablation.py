@@ -23,7 +23,7 @@ import subprocess
 import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-TRAINER = os.path.join(SCRIPT_DIR, "train_rl_active_learning_v11_world_model.py")
+TRAINER = os.path.join(SCRIPT_DIR, "train_rl_active_learning_world_model.py")
 
 DEFAULT_SEEDS = [42, 43, 44]
 CONFIGS = [
@@ -33,7 +33,7 @@ CONFIGS = [
     {"tag": "clip0p1", "ent_coef": 0.02, "clip_range": 0.1},
     {"tag": "clip0p3", "ent_coef": 0.02, "clip_range": 0.3},
 ]
-# Formal mode agent geometry (results_v11_world_model/mode_transmit_*):
+# Formal mode agent geometry (results_world_model/mode_transmit_*):
 # ppo_n_steps = episode_len * selfplay_round_episodes = 25 * 64 = 1600,
 # pretrained world model m1 = the same server checkpoint the formal
 # agents used.
@@ -43,7 +43,7 @@ DEFAULT_TIMESTEPS = 100000
 WORLD_MODEL_PATH = os.path.join(
     SCRIPT_DIR, "server",
     "best_system_eq_robust_dropout_M1_c_theta0p0to60p0_order16.pth")
-DEFAULT_ROOT = os.path.join(SCRIPT_DIR, "results_v11_world_model")
+DEFAULT_ROOT = os.path.join(SCRIPT_DIR, "results_world_model")
 
 
 def build_matrix(configs, seeds):

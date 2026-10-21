@@ -12,9 +12,9 @@ monkey-patching.
 
 | File | Role |
 |---|---|
-| `train_rl_active_learning_v11_world_model.py` | **Canonical entry point** (compatibility shim → `active_rl.cli`). Filename kept so existing commands/scripts keep working. |
+| `train_rl_active_learning_world_model.py` | **Canonical entry point** (thin shim → `active_rl.cli`, so it also works when run as a plain script from any cwd). |
 | `train.py` | Same entry via `python -m active_rl.train`. |
-| `config.py` | Shared constants, paths, `results_v11_world_model/` output dir; sets `KMP_DUPLICATE_LIB_OK` and warning filters before torch loads. |
+| `config.py` | Shared constants, paths, `results_world_model/` output dir; sets `KMP_DUPLICATE_LIB_OK` and warning filters before torch loads. |
 | `networks.py` | Model definitions (MIONet, MIONetKernel, PhysicsBranch, Chebyshev frequency basis) — merged from the former `mionet_common.py` + `chebyshev_basis.py`; checkpoint layouts unchanged. |
 | `cst_client.py` | CST TCP client (4-byte length framing, cache, retries) and `MockCST`. |
 | `reward.py` | `task_reward_v11` terminal S-parameter reward chain + `aggregate_stability_reward`. |
@@ -39,7 +39,7 @@ Offline RL training (paper ablation protocol, mode agent) — all three forms
 are equivalent:
 
 ```bash
-python active_rl/train_rl_active_learning_v11_world_model.py \
+python active_rl/train_rl_active_learning_world_model.py \
     --task-kind mode --design-mode transmit --no-cst \
     --timesteps 100000 --episode-len 25 --selfplay-round-episodes 64 \
     --seed 42 --tag my_run
@@ -58,7 +58,7 @@ Hyperparameter ablation (writes per-run logs, then aggregate):
 python active_rl/run_rl_hp_ablation.py --dry-run          # print the 15 commands
 python active_rl/run_rl_hp_ablation.py --jobs 3           # run (logs -> <root>/ablation_logs/)
 python active_rl/aggregate_rl_hp_from_logs.py \
-    --log-dir active_rl/results_v11_world_model/ablation_logs --out hp_ablation.md
+    --log-dir active_rl/results_world_model/ablation_logs --out hp_ablation.md
 ```
 
 τ-threshold uncertainty audit (seed-43 protocol used in the response letter):
@@ -77,5 +77,5 @@ python active_rl/tau_monitor.py --help
   `ga_search.py` for design search with a trained policy). This folder holds
   the training-side research code; the two coexist by design and are not
   cross-imported.
-- Run outputs are isolated under `active_rl/results_v11_world_model/` and do
+- Run outputs are isolated under `active_rl/results_world_model/` and do
   not touch the clean reimplementation in `../inverse/`.
