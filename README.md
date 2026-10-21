@@ -1,4 +1,4 @@
-# A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Uncertainty-Aware Inverse Design Design
+# MIONet-FSS: A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Active Inverse Design
 
 Deep-learning-driven forward prediction and inverse design of Frequency Selective
 Surfaces (FSS) using **MIONet** (Multiple-Input Operator Networks).  The system
@@ -11,7 +11,7 @@ layouts that satisfy user-defined filtering tasks.
 
 If you use this code in your research, please cite the accompanying paper:
 
-> **A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Uncertainty-Aware Inverse Design**
+> **A Chebyshev-Encoded Multi-Input Operator Network for Pixelated Frequency Selective Surface Modeling and Active Inverse Design**
 >
 > Weikai Luo, Da Li, Zhang Pei, Jiahui Wang, Wenzhe Wu, Ruifeng Li, Jinyan Ma, Chongxiao Qu, and Er-Ping Li
 >
@@ -35,6 +35,9 @@ MIONet-FSS/
   code/
     common/          Shared modules: config, MIONet, dataset, loss, basis
     forward/         Training entry point + world-model inference wrapper
+    active_rl/       Active PPO training code used for the paper (v11 canonical:
+                     world-model ensemble + uncertainty-gated CST verification,
+                     tau monitor, PPO hyperparameter ablation, checkpoints)
     inverse/         RL environment (V11AngleDispersionEnv), reward, task spec, GA/RL search
     cst/             CST Studio Suite TCP client + batch-validation script
     eval/            Pass-rate computation, benchmark runner, summary tables
@@ -53,7 +56,7 @@ supports a specific Python version:
 conda create -n pytorch python=3.10 -y
 conda activate pytorch
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install numpy gymnasium matplotlib scipy
+pip install numpy gymnasium matplotlib scipy stable-baselines3 tensorboard
 ```
 
 Used for: training MIONet, RL/GA inverse design, pass-rate evaluation, and all
@@ -95,6 +98,19 @@ python forward/train.py --epochs 300 --batch-size 64 --lr 1e-3 --output ./checkp
 
 Loads the paired TE+TM dataset, splits by geometry, and trains a 3-branch
 MIONet with dual-mode physics-aware loss.
+
+### Train the active-RL agent (v11 — paper configuration)
+
+```bash
+conda activate pytorch
+cd MIONet-FSS/code
+python active_rl/train_rl_active_learning_v11_world_model.py \
+    --task-kind mode --design-mode transmit --no-cst --timesteps 100000 \
+    --episode-len 25 --selfplay-round-episodes 64
+```
+
+Details, ablation commands, and the τ-audit monitor are in
+`code/active_rl/README.md`.
 
 ### Inverse design (RL)
 
@@ -143,6 +159,15 @@ python eval/benchmark.py
 | `common/loss.py` | DualModePhysicsLoss: MSE + energy-conservation penalty |
 | `forward/train.py` | Training entry point for M1 MIONet |
 | `forward/world_model.py` | Inference-only ensemble wrapper for RL/GA evaluation |
+| `active_rl/train_rl_active_learning_v11_world_model.py` | **Canonical active-RL training entry (paper configuration)**; compatibility shim → `active_rl.cli` (same name, existing commands keep working) |
+| `active_rl/cli.py`, `active_rl/trainer.py` | CLI flags (27 + 3 fixed-target) and `train(args)`: PPO construction, RNG order, `run_meta.json` |
+| `active_rl/env.py`, `active_rl/tasks.py`, `active_rl/reward.py` | `V11AngleDispersionEnv` (quarter-pixel placement + curve observations), task builders / fixed v11 4×4 grid sampling, terminal S-parameter reward |
+| `active_rl/world_model.py`, `active_rl/networks.py` | Local 3-copy MIONet ensemble (surrogate evaluated every step); model definitions (checkpoint layouts unchanged) |
+| `active_rl/cst_gate.py`, `active_rl/cst_client.py` | Uncertainty gating + CST query selection; TCP client with cache/retries and `MockCST` |
+| `active_rl/tau_monitor.py` | τ-threshold sweep monitor for the uncertainty audit (gate audit, CST call timing, certified-best log) |
+| `active_rl/run_rl_hp_ablation.py` | PPO hyperparameter ablation launcher (5 configs × 3 seeds × 100k steps) |
+| `active_rl/aggregate_rl_hp_from_logs.py` | Aggregates ablation trainer logs into per-config mean ± SD tables |
+| `active_rl/server/*.pth` | Pretrained M1/M2 world-model checkpoints (order-16) used by the formal agents |
 | `inverse/env.py` | Gymnasium environment for sequential quarter-pixel placement |
 | `inverse/reward.py` | V11 reward: in-band score minus out-band penalty + stability |
 | `inverse/task.py` | Task-spec builders for mode, angle, and joint design tasks |
